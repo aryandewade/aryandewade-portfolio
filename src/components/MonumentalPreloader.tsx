@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 type MonumentalPreloaderProps = {
   onComplete?: () => void;
@@ -8,7 +11,7 @@ type MonumentalPreloaderProps = {
 
 export default function MonumentalPreloader({
   onComplete,
-  duration = 2.0,
+  duration = 1.8,
 }: MonumentalPreloaderProps) {
   const [progress, setProgress] = useState(0);
   const [isDone, setIsDone] = useState(false);
@@ -19,15 +22,81 @@ export default function MonumentalPreloader({
   const contentLayerRef = useRef<HTMLDivElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
 
-  // Lock body scroll while preloader is active
+  // Restore scroll helper function
+  const unlockScroll = () => {
+    document.body.classList.remove("preloader-locked");
+    document.body.style.overflow = "";
+    document.body.style.overflowX = "hidden";
+    document.documentElement.style.overflow = "";
+    document.documentElement.style.overflowX = "hidden";
+    ScrollTrigger.refresh();
+  };
+
+  // Lock scroll while active, unlock reliably on unmount
   useEffect(() => {
-    const originalOverflow = document.body.style.overflow;
+    document.body.classList.add("preloader-locked");
     document.body.style.overflow = "hidden";
 
+    // Failsafe: Ensure scroll is ALWAYS unlocked after 3.2s even if anything unexpected happens
+    const failsafeTimer = setTimeout(() => {
+      unlockScroll();
+      setIsDone(true);
+      if (onComplete) onComplete();
+    }, 3200);
+
     return () => {
-      document.body.style.overflow = originalOverflow;
+      clearTimeout(failsafeTimer);
+      unlockScroll();
     };
   }, []);
+
+  // Split-curtain exit transition matching Framer Monumental Preloader Dot
+  const triggerExit = () => {
+    // Immediately disable pointer events on preloader so site is clickable
+    if (containerRef.current) {
+      containerRef.current.style.pointerEvents = "none";
+    }
+
+    const exitTl = gsap.timeline({
+      onComplete: () => {
+        unlockScroll();
+        setIsDone(true);
+        if (onComplete) onComplete();
+      },
+    });
+
+    // 1. Content elements fade out swiftly
+    if (contentLayerRef.current) {
+      exitTl.to(contentLayerRef.current, {
+        opacity: 0,
+        duration: 0.22,
+        ease: "power2.inOut",
+      });
+    }
+
+    // 2. Split curtain: top slides up, bottom slides down
+    if (topCurtainRef.current && bottomCurtainRef.current) {
+      exitTl.to(
+        topCurtainRef.current,
+        {
+          yPercent: -100,
+          duration: 0.7,
+          ease: "power4.inOut",
+        },
+        "-=0.08"
+      );
+
+      exitTl.to(
+        bottomCurtainRef.current,
+        {
+          yPercent: 100,
+          duration: 0.7,
+          ease: "power4.inOut",
+        },
+        "<" // simultaneous with top curtain
+      );
+    }
+  };
 
   // Smooth progress count-up
   useEffect(() => {
@@ -38,7 +107,7 @@ export default function MonumentalPreloader({
         // Hold briefly at 100%, then trigger split-curtain exit animation
         setTimeout(() => {
           triggerExit();
-        }, 220);
+        }, 180);
       },
     });
 
@@ -59,44 +128,6 @@ export default function MonumentalPreloader({
       tl.kill();
     };
   }, [duration]);
-
-  // Split-curtain exit transition matching Framer Monumental Preloader Dot
-  const triggerExit = () => {
-    const exitTl = gsap.timeline({
-      onComplete: () => {
-        setIsDone(true);
-        if (onComplete) onComplete();
-      },
-    });
-
-    // 1. Content elements fade out swiftly
-    exitTl.to(contentLayerRef.current, {
-      opacity: 0,
-      duration: 0.25,
-      ease: "power2.inOut",
-    });
-
-    // 2. Split curtain: top slides up, bottom slides down
-    exitTl.to(
-      topCurtainRef.current,
-      {
-        yPercent: -100,
-        duration: 0.75,
-        ease: "power4.inOut",
-      },
-      "-=0.1"
-    );
-
-    exitTl.to(
-      bottomCurtainRef.current,
-      {
-        yPercent: 100,
-        duration: 0.75,
-        ease: "power4.inOut",
-      },
-      "<" // sync with top curtain
-    );
-  };
 
   if (isDone) return null;
 

@@ -2933,6 +2933,10 @@ body.is-engaged .cursor-dot {
    MONUMENTAL GRID PRELOADER (DOT MATRIX + SPLIT CURTAIN)
    ========================================================= */
 
+body.preloader-locked {
+  overflow: hidden !important;
+}
+
 .monumental-preloader-root {
   position: fixed;
   inset: 0;

@@ -80,6 +80,7 @@ function App() {
   const [activeProject, setActiveProject] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [preloaderComplete, setPreloaderComplete] = useState(false);
 
   useEffect(() => {
     const reveal = new IntersectionObserver(
@@ -107,7 +108,9 @@ function App() {
   return (
     <main>
       {/* Monumental Dot Matrix Preloader with Split-Curtain Exit */}
-      <MonumentalPreloader />
+      {!preloaderComplete && (
+        <MonumentalPreloader onComplete={() => setPreloaderComplete(true)} />
+      )}
 
       <ElasticCursor />
       <CursorPet />
