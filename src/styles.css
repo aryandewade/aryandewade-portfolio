@@ -2928,3 +2928,244 @@ body.is-engaged .cursor-dot {
     gap: 28px;
   }
 }
+
+/* =========================================================
+   MONUMENTAL GRID PRELOADER (DOT MATRIX + SPLIT CURTAIN)
+   ========================================================= */
+
+.monumental-preloader-root {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 99999;
+  overflow: hidden;
+  pointer-events: auto;
+  background: transparent;
+}
+
+.preloader-curtain {
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 50%;
+  background: #08080a;
+  z-index: 1;
+  will-change: transform;
+}
+
+.preloader-curtain-top {
+  top: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.preloader-curtain-bottom {
+  bottom: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.preloader-content-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(20px, 4vw, 44px);
+  box-sizing: border-box;
+  will-change: opacity;
+}
+
+.preloader-grid-dots {
+  position: absolute;
+  inset: 0;
+  opacity: 0.13;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='36' height='36' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='18' cy='18' r='1.25' fill='%23ffffff'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+.preloader-top-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.preloader-top-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.85);
+  will-change: width;
+}
+
+.preloader-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 5;
+  pointer-events: auto;
+  width: 100%;
+}
+
+.preloader-wordmark {
+  font-family: 'Host Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: clamp(17px, 2.2vw, 22px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: #ffffff;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.preloader-wordmark span {
+  color: #71717a;
+}
+
+.preloader-desktop-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #f4f4f5;
+  font-family: 'Host Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: clamp(11px, 1.2vw, 13px);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  user-select: none;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+}
+
+.preloader-badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8;
+  display: inline-block;
+  animation: preloader-dot-pulse 1.8s infinite ease-in-out;
+}
+
+@keyframes preloader-dot-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 8px #38bdf8;
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.85);
+    box-shadow: 0 0 3px #38bdf8;
+  }
+}
+
+.preloader-center-meta {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.preloader-center-meta .meta-tag {
+  font-family: 'Host Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+}
+
+.preloader-center-meta .meta-status {
+  font-family: 'Host Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: #a1a1aa;
+  text-transform: uppercase;
+}
+
+.preloader-counter-wrap {
+  position: absolute;
+  bottom: clamp(24px, 4vw, 44px);
+  left: clamp(20px, 4vw, 44px);
+  z-index: 5;
+  user-select: none;
+  pointer-events: none;
+}
+
+.preloader-counter-number {
+  font-family: 'Host Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: clamp(84px, 16vw, 180px);
+  font-weight: 400;
+  line-height: 0.88;
+  letter-spacing: -0.06em;
+  color: #f4f4f5;
+  display: block;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+}
+
+.preloader-bottom-right {
+  position: absolute;
+  bottom: clamp(24px, 4vw, 44px);
+  right: clamp(20px, 4vw, 44px);
+  z-index: 5;
+  text-align: right;
+  user-select: none;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.preloader-subtext {
+  font-family: 'Host Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: clamp(12px, 1.4vw, 14px);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+.preloader-coordinates {
+  font-family: 'Host Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: clamp(11px, 1.2vw, 12px);
+  font-weight: 400;
+  color: #71717a;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 640px) {
+  .preloader-center-meta {
+    display: none;
+  }
+  .preloader-bottom-right {
+    display: none;
+  }
+  .preloader-desktop-badge {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+  .preloader-counter-number {
+    font-size: clamp(74px, 22vw, 110px);
+  }
+}

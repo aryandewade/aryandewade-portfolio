@@ -7,6 +7,7 @@ import CursorPet from "./components/CursorPet";
 import AboutSection from "./components/AboutSection";
 import ExperienceSection from "./components/ExperienceSection";
 import Footer from "./components/Footer";
+import MonumentalPreloader from "./components/MonumentalPreloader";
 
 type Project = {
   title: string;
@@ -105,6 +106,9 @@ function App() {
 
   return (
     <main>
+      {/* Monumental Dot Matrix Preloader with Split-Curtain Exit */}
+      <MonumentalPreloader />
+
       <ElasticCursor />
       <CursorPet />
 
