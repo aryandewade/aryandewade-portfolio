@@ -6,6 +6,8 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function ExperienceSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const eduColRef = useRef<HTMLDivElement>(null);
   const lineFillRef = useRef<HTMLDivElement>(null);
   const eduLineRef = useRef<HTMLDivElement>(null);
 
@@ -20,22 +22,23 @@ export default function ExperienceSection() {
     if (!sectionRef.current) return;
 
     const ctx = gsap.context(() => {
-      // Experience column timeline: line grows and reveals entries sequentially
+      // Experience column timeline: triggers directly on the experience timeline container
+      // Completes while the experience entries are front-and-center, NOT late when entering projects
       const expTl = gsap.timeline({
         scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 75%",
-          end: "bottom 45%",
-          scrub: 0.5,
+          trigger: timelineRef.current || sectionRef.current,
+          start: "top 80%",
+          end: "bottom 60%",
+          scrub: 0.4,
         },
       });
 
       expTl
-        // 1. Line grows from start to Marker 1
+        // 1. Line starts and connects to Marker 1
         .to(lineFillRef.current, {
-          scaleY: 0.32,
+          scaleY: 0.08,
           ease: "none",
-          duration: 0.8,
+          duration: 0.25,
         })
         // Marker 1 activates with clean cyan glow
         .to(
@@ -46,29 +49,29 @@ export default function ExperienceSection() {
             backgroundColor: "#0284c7",
             boxShadow: "0 0 0 5px rgba(56, 189, 248, 0.2), 0 0 16px rgba(56, 189, 248, 0.5)",
             opacity: 1,
-            duration: 0.35,
+            duration: 0.25,
             ease: "back.out(1.8)",
           },
-          "-=0.2"
+          "-=0.1"
         )
-        // Entry 1 content reveals
+        // Entry 1 (Engiplex) content reveals
         .to(
           entry1Ref.current,
           {
             opacity: 1,
             y: 0,
-            duration: 0.6,
+            duration: 0.45,
             ease: "power2.out",
           },
-          "-=0.25"
+          "-=0.15"
         )
-        // 2. Line continues growing down to Marker 2
+        // 2. Line grows down to Marker 2 (at ~58% of the timeline height)
         .to(lineFillRef.current, {
-          scaleY: 1,
+          scaleY: 0.58,
           ease: "none",
-          duration: 1.1,
+          duration: 0.65,
         })
-        // Marker 2 activates
+        // Marker 2 activates promptly as the line reaches it
         .to(
           marker2Ref.current,
           {
@@ -77,30 +80,36 @@ export default function ExperienceSection() {
             backgroundColor: "#4f46e5",
             boxShadow: "0 0 0 5px rgba(129, 140, 248, 0.2), 0 0 16px rgba(129, 140, 248, 0.5)",
             opacity: 1,
-            duration: 0.35,
+            duration: 0.25,
             ease: "back.out(1.8)",
           },
-          "-=0.2"
+          "-=0.1"
         )
-        // Entry 2 content reveals
+        // Entry 2 (CSESA) reveals right away while looking at experience
         .to(
           entry2Ref.current,
           {
             opacity: 1,
             y: 0,
-            duration: 0.6,
+            duration: 0.5,
             ease: "power2.out",
           },
-          "-=0.25"
-        );
+          "-=0.15"
+        )
+        // 3. Line smoothly finishes growing to the bottom of the timeline
+        .to(lineFillRef.current, {
+          scaleY: 1,
+          ease: "none",
+          duration: 0.4,
+        });
 
-      // Education column: horizontal divider line grows & content reveals
+      // Education column: triggers directly on the education column
       const eduTl = gsap.timeline({
         scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 72%",
-          end: "bottom 55%",
-          scrub: 0.5,
+          trigger: eduColRef.current || sectionRef.current,
+          start: "top 80%",
+          end: "bottom 65%",
+          scrub: 0.4,
         },
       });
 
@@ -108,28 +117,28 @@ export default function ExperienceSection() {
         .to(eduLineRef.current, {
           scaleX: 1,
           ease: "none",
-          duration: 0.9,
+          duration: 0.7,
         })
         .to(
           eduItemRef.current,
           {
             opacity: 1,
             y: 0,
-            duration: 0.6,
+            duration: 0.5,
             ease: "power2.out",
           },
-          "-=0.4"
+          "-=0.3"
         )
         .to(
           eduHistoryRef.current?.children ? Array.from(eduHistoryRef.current.children) : [],
           {
             opacity: 1,
             scale: 1,
-            stagger: 0.15,
-            duration: 0.5,
+            stagger: 0.12,
+            duration: 0.4,
             ease: "back.out(1.5)",
           },
-          "-=0.2"
+          "-=0.15"
         );
     }, sectionRef);
 
@@ -152,7 +161,7 @@ export default function ExperienceSection() {
       {/* Experience Column */}
       <div className="experience-col">
         <p className="eyebrow">03 / EXPERIENCE</p>
-        <div className="experience-timeline">
+        <div className="experience-timeline" ref={timelineRef}>
           {/* Animated vertical track */}
           <div className="timeline-track-wrap" aria-hidden="true">
             <div className="timeline-track-rail" />
@@ -190,7 +199,7 @@ export default function ExperienceSection() {
       </div>
 
       {/* Education Column */}
-      <div className="education-col">
+      <div className="education-col" ref={eduColRef}>
         <p className="eyebrow">EDUCATION</p>
         <div className="education-divider-line" ref={eduLineRef} aria-hidden="true" />
 
